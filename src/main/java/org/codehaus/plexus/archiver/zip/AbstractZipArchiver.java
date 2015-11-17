@@ -38,6 +38,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.UnixStat;
+import org.codehaus.plexus.archiver.util.FastByteArrayOutputStream;
 import org.codehaus.plexus.archiver.util.ResourceUtils;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResource;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -478,7 +479,7 @@ public abstract class AbstractZipArchiver
                 if ( !in.markSupported() )
                 {
                     // Store data into a byte[]
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    FastByteArrayOutputStream bos = new FastByteArrayOutputStream();
 
                     byte[] buffer = new byte[8 * 1024];
                     int count = 0;
@@ -492,7 +493,7 @@ public abstract class AbstractZipArchiver
                     }
                     while ( count != -1 );
 
-                    in = new ByteArrayInputStream( bos.toByteArray() );
+                    in = bos.toInputStream();
                 }
                 else
                 {

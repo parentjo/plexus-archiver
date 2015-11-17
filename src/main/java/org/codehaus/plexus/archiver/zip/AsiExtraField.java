@@ -304,7 +304,8 @@ public class AsiExtraField
         throws ZipException
     {
 
-        long givenChecksum = ( new ZipLong( data, offset ) ).getValue();
+//        long givenChecksum = ( new ZipLong( data, offset ) ).getValue();
+        long givenChecksum = ZipLong.convert( data, offset );
         byte[] tmp = new byte[length - 4];
         System.arraycopy( data, offset + 4, tmp, 0, length - 4 );
         crc.reset();
@@ -316,10 +317,10 @@ public class AsiExtraField
                 + Long.toHexString( realChecksum ) );
         }
 
-        int newMode = ( new ZipShort( tmp, 0 ) ).getValue();
-        byte[] linkArray = new byte[(int) ( new ZipLong( tmp, 2 ) ).getValue()];
-        uid = ( new ZipShort( tmp, 6 ) ).getValue();
-        gid = ( new ZipShort( tmp, 8 ) ).getValue();
+        int newMode = ZipShort.convert( tmp, 0 );
+        byte[] linkArray = new byte[(int) ZipLong.convert( tmp, 2 )];
+        uid = ZipShort.convert( tmp, 6 );
+        gid = ZipShort.convert( tmp, 8 );
 
         if ( linkArray.length == 0 )
         {

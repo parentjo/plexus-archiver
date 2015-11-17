@@ -341,12 +341,12 @@ public class ZipEntry
      *
      * @since 1.1
      */
-    public void setExtra( byte[] extra )
+    public void setExtra( byte[] extra, int len )
         throws RuntimeException
     {
         try
         {
-            setExtraFields( ExtraFieldUtils.parse( extra ) );
+            setExtraFields( ExtraFieldUtils.parse( extra, len ) );
         }
         catch ( Exception e )
         {

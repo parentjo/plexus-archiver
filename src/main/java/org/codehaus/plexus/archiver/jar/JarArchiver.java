@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.EnumeratedAttribute;
+import org.codehaus.plexus.archiver.util.FastByteArrayOutputStream;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.archiver.zip.ZipEntry;
 import org.codehaus.plexus.archiver.zip.ZipFile;
@@ -343,10 +344,10 @@ public class JarArchiver
 
         zipDir( null, zOut, "META-INF/", DEFAULT_DIR_MODE );
         // time to write the manifest
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
         manifest.write( baos );
 
-        ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
+        ByteArrayInputStream bais = baos.toInputStream();
         super.zipFile( bais, zOut, MANIFEST_NAME, System.currentTimeMillis(), null, DEFAULT_FILE_MODE );
         super.initZipOutputStream( zOut );
     }
@@ -375,7 +376,7 @@ public class JarArchiver
     private void createIndexList( ZipOutputStream zOut )
         throws IOException, ArchiverException
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
         // encoding must be UTF8 as specified in the specs.
         PrintWriter writer = new PrintWriter( new OutputStreamWriter( baos, "UTF8" ) );
 
@@ -446,7 +447,7 @@ public class JarArchiver
 
         writer.flush();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
+        ByteArrayInputStream bais = baos.toInputStream();
 
         super.zipFile( bais, zOut, INDEX_NAME, System.currentTimeMillis(), null, DEFAULT_FILE_MODE );
     }

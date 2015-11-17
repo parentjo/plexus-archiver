@@ -17,6 +17,7 @@ package org.codehaus.plexus.archiver.zip;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.zip.ZipException;
@@ -97,16 +98,20 @@ public class ExtraFieldUtils
      *
      * @since 1.1
      */
-    public static ZipExtraField[] parse( byte[] data )
+    public static ZipExtraField[] parse( byte[] data ) throws ZipException {
+        return parse(data, data.length);
+    }
+
+    public static ZipExtraField[] parse( byte[] data, int len )
         throws ZipException
     {
-        Vector v = new Vector();
+        ArrayList v = new ArrayList();
         int start = 0;
-        while ( start <= data.length - 4 )
+        while ( start <= len - 4 )
         {
             ZipShort headerId = new ZipShort( data, start );
-            int length = ( new ZipShort( data, start + 2 ) ).getValue();
-            if ( start + 4 + length > data.length )
+            int length = ZipShort.convert( data, start + 2 );
+            if ( start + 4 + length > len )
             {
                 throw new ZipException( "data starting at " + start + " is in unknown format" );
             }
@@ -114,7 +119,7 @@ public class ExtraFieldUtils
             {
                 ZipExtraField ze = createExtraField( headerId );
                 ze.parseFromLocalFileData( data, start + 4, length );
-                v.addElement( ze );
+                v.add(ze);
             }
             catch ( InstantiationException ie )
             {
@@ -126,13 +131,13 @@ public class ExtraFieldUtils
             }
             start += ( length + 4 );
         }
-        if ( start != data.length )
+        if ( start != len )
         { // array not exhausted
             throw new ZipException( "data starting at " + start + " is in unknown format" );
         }
 
         ZipExtraField[] result = new ZipExtraField[v.size()];
-        v.copyInto( result );
+        v.toArray(result);
         return result;
     }
 
